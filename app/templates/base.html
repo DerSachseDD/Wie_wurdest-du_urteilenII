@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Wie würdest du urteilen?{% endblock %}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <!-- PLAUSIBLE ANALYTICS PLACEHOLDER: Add your Plausible script here when ready. -->
+  {% block head %}{% endblock %}
+</head>
+<body class="min-h-screen bg-slate-50 text-slate-900">
+  <header class="border-b bg-white">
+    <div class="mx-auto flex max-w-4xl items-center justify-between px-4 py-4">
+      <a class="text-lg font-bold tracking-tight" href="{{ url_for('main.index') }}">Wie würdest du urteilen?</a>
+      <span class="hidden text-sm text-slate-500 sm:inline">Schätzen. Abstimmen. Vergleichen.</span>
+    </div>
+  </header>
+  <main class="mx-auto max-w-4xl px-4 py-8">
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}{% for message in messages %}
+        <p class="mb-4 rounded-lg bg-amber-100 p-3 text-amber-900">{{ message }}</p>
+      {% endfor %}{% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </main>
+  <footer class="mx-auto max-w-4xl px-4 pb-8 text-xs text-slate-500">
+    Ein Bildungsprojekt, keine Rechtsberatung. Die Fälle sind hier als illustrative Beispiele gekennzeichnet.
+  </footer>
+</body>
+</html>

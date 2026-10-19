@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Fall nicht gefunden{% endblock %}
+{% block content %}
+<div class="rounded-2xl border bg-white p-8">
+  <h1 class="text-2xl font-bold">Fall nicht gefunden</h1>
+  <p class="mt-2 text-slate-600">Dieser Fall existiert nicht mehr oder die ID ist ungültig.</p>
+  <a class="mt-4 inline-block text-indigo-700 underline" href="{{ url_for('main.index') }}">Zur Startseite</a>
+</div>
+{% endblock %}

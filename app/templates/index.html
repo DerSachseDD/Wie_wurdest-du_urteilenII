@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}Fall einschätzen – Wie würdest du urteilen?{% endblock %}
+{% block content %}
+{% if case %}
+  <div class="mb-6">
+    <p class="mb-2 text-sm font-semibold uppercase tracking-wider text-indigo-700">Dein Fall · {{ case.category }}</p>
+    <h1 class="text-3xl font-bold tracking-tight">{{ case.title }}</h1>
+  </div>
+  <article class="rounded-2xl border bg-white p-6 shadow-sm">
+    <p class="leading-7 text-slate-700">{{ case.description }}</p>
+    <form id="vote-form" action="{{ url_for('main.api_vote') }}" method="post" class="mt-8 space-y-8">
+      <input type="hidden" name="case_id" value="{{ case.id }}">
+      <div>
+        <div class="mb-3 flex items-center justify-between gap-4">
+          <label for="fine_guess" class="font-semibold">Welche Geldstrafe / welches Bußgeld?</label>
+          <output id="fine-output" class="rounded-lg bg-indigo-50 px-3 py-1 font-bold text-indigo-800">500 €</output>
+        </div>
+        <input id="fine_guess" name="fine_guess" type="range" min="0" max="5000" step="25" value="500" class="w-full" required>
+        <div class="flex justify-between text-xs text-slate-500"><span>0 €</span><span>5.000 €</span></div>
+      </div>
+      <div>
+        <div class="mb-3 flex items-center justify-between gap-4">
+          <label for="jail_guess" class="font-semibold">Wie viel Freiheitsstrafe?</label>
+          <output id="jail-output" class="rounded-lg bg-indigo-50 px-3 py-1 font-bold text-indigo-800">0 Jahre</output>
+        </div>
+        <input id="jail_guess" name="jail_guess" type="range" min="0" max="10" step="0.25" value="0" class="w-full" required>
+        <div class="flex justify-between text-xs text-slate-500"><span>0 Jahre</span><span>10 Jahre</span></div>
+      </div>
+      <p id="form-error" class="hidden text-sm text-red-700" role="alert"></p>
+      <button class="w-full rounded-xl bg-indigo-700 px-5 py-3 font-semibold text-white hover:bg-indigo-800 focus:outline-none focus:ring-2 focus:ring-indigo-500" type="submit">Urteil abgeben</button>
+    </form>
+  </article>
+  <p class="mt-4 text-sm text-slate-500">Hinweis: Die Fälle dienen der Veranschaulichung. Die angezeigten Beispielwerte sind keine verifizierten Gerichtsurteile.</p>
+{% else %}
+  <div class="rounded-2xl border bg-white p-8 text-center">
+    <h1 class="text-2xl font-bold">Noch keine Fälle vorhanden</h1>
+    <p class="mt-2 text-slate-600">Bitte ergänze Fälle in <code>app/cases/data.json</code>.</p>
+  </div>
+{% endif %}
+{% endblock %}
+{% block head %}
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const fine = document.getElementById("fine_guess");
+  const jail = document.getElementById("jail_guess");
+  if (!fine || !jail) return;
+  const fineOutput = document.getElementById("fine-output");
+  const jailOutput = document.getElementById("jail-output");
+  const update = () => {
+    fineOutput.textContent = `${Number(fine.value).toLocaleString("de-DE")} €`;
+    jailOutput.textContent = `${Number(jail.value).toLocaleString("de-DE")} Jahre`;
+  };
+  fine.addEventListener("input", update);
+  jail.addEventListener("input", update);
+
+  // Keep the endpoint JSON-friendly while providing a normal browser redirect.
+  document.getElementById("vote-form").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const error = document.getElementById("form-error");
+    try {
+      const response = await fetch(form.action, {
+        method: "POST",
+        body: new FormData(form),
+        redirect: "manual"
+      });
+      if (response.type === "opaqueredirect" || response.status === 303) {
+        window.location.href = `/result/${form.elements.case_id.value}`;
+        return;
+      }
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || "Deine Schätzung konnte nicht gespeichert werden.");
+      }
+      window.location.href = `/result/${form.elements.case_id.value}`;
+    } catch (err) {
+      error.textContent = err.message || "Verbindungsfehler. Bitte versuche es erneut.";
+      error.classList.remove("hidden");
+    }
+  });
+});
+</script>
+{% endblock %}

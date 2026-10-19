@@ -1,0 +1,29 @@
+[
+  {
+    "id": 1,
+    "title": "Ladendiebstahl: Parfüm",
+    "description": "Eine 22-jährige Person steckt in einer Drogerie ein Parfüm im Wert von 39 € ein und verlässt das Geschäft, ohne zu bezahlen. Die Tat wird beobachtet. Es gibt keine Gewalt; die Person ist bisher nicht vorbestraft.",
+    "real_sentence": "Beispielhafter Übungsfall: 300 € Geldstrafe",
+    "category": "theft",
+    "real_fine": 300,
+    "real_jail": 0
+  },
+  {
+    "id": 2,
+    "title": "Deutliche Geschwindigkeitsüberschreitung",
+    "description": "Ein Autofahrer wird innerorts mit 71 km/h statt der erlaubten 50 km/h gemessen. Es kam zu keinem Unfall. Die konkreten Folgen hängen unter anderem von Messwert, Toleranzabzug und Vorbelastungen ab.",
+    "real_sentence": "Beispielhafter Übungsfall: 115 € Bußgeld",
+    "category": "traffic",
+    "real_fine": 115,
+    "real_jail": 0
+  },
+  {
+    "id": 3,
+    "title": "Beleidigung im Streit",
+    "description": "Bei einem Streit in der Öffentlichkeit beleidigt eine Person eine andere Person. Es gibt keine körperliche Auseinandersetzung. Weitere Umstände und der genaue Wortlaut sind für die rechtliche Bewertung wichtig.",
+    "real_sentence": "Beispielhafter Übungsfall: 400 € Geldstrafe",
+    "category": "insult",
+    "real_fine": 400,
+    "real_jail": 0
+  }
+]

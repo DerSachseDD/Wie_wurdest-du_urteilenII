@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}Dein Ergebnis – Wie würdest du urteilen?{% endblock %}
+{% block content %}
+<div class="mb-6">
+  <p class="mb-2 text-sm font-semibold uppercase tracking-wider text-indigo-700">Dein Ergebnis</p>
+  <h1 class="text-3xl font-bold tracking-tight">{{ case.title }}</h1>
+</div>
+<div class="grid gap-4 md:grid-cols-3">
+  <section class="rounded-2xl border bg-white p-5 shadow-sm">
+    <p class="text-sm text-slate-500">Deine Schätzung</p>
+    <p class="mt-2 text-xl font-bold">{{ your_sentence }}</p>
+    <p class="mt-2 text-sm text-slate-500">{{ your_fine|round|int }} € · {{ your_jail }} Jahre</p>
+  </section>
+  <section class="rounded-2xl border bg-white p-5 shadow-sm">
+    <p class="text-sm text-slate-500">Reales / angegebenes Ergebnis</p>
+    <p class="mt-2 text-xl font-bold">{{ real_sentence }}</p>
+    <p class="mt-2 text-sm text-slate-500">{{ case.real_fine|round|int }} € · {{ case.real_jail }} Jahre</p>
+  </section>
+  <section class="rounded-2xl border bg-white p-5 shadow-sm">
+    <p class="text-sm text-slate-500">Durchschnitt von {{ stats.vote_count }} Nutzer:innen</p>
+    <p class="mt-2 text-xl font-bold">{{ average_sentence }}</p>
+    <p class="mt-2 text-sm text-slate-500">{{ stats.average_fine|round|int }} € · {{ stats.average_jail }} Jahre</p>
+  </section>
+</div>
+
+<section class="mt-6 rounded-2xl border bg-white p-6 shadow-sm">
+  <h2 class="text-xl font-bold">Vergleich deiner Schätzung</h2>
+  <p class="mt-1 text-sm text-slate-500">Geldstrafe und Freiheitsstrafe haben unterschiedliche Einheiten und werden deshalb in getrennten Diagrammen verglichen.</p>
+  <div class="mt-6 grid gap-8 md:grid-cols-2">
+    <div><h3 class="mb-2 font-semibold">Geldstrafe (€)</h3><canvas id="fine-chart" aria-label="Vergleich der Geldstrafen" role="img"></canvas></div>
+    <div><h3 class="mb-2 font-semibold">Freiheitsstrafe (Jahre)</h3><canvas id="jail-chart" aria-label="Vergleich der Freiheitsstrafen" role="img"></canvas></div>
+  </div>
+</section>
+
+<!-- ADSENSE PLACEHOLDER -->
+<div class="my-6 rounded-xl border border-dashed border-slate-300 p-4 text-center text-sm text-slate-400">Werbefläche (noch nicht aktiv)</div>
+<!-- AFFILIATE PLACEHOLDER: Bußgeld prüfen -->
+<div class="mb-6 rounded-xl border border-dashed border-slate-300 p-4 text-sm text-slate-400">Platzhalter für einen späteren Link zum Bußgeld-Check</div>
+
+<div class="flex flex-wrap gap-3">
+  <a href="{{ url_for('main.index') }}" class="rounded-xl bg-indigo-700 px-5 py-3 font-semibold text-white hover:bg-indigo-800">Nächsten Fall einschätzen</a>
+  <a href="{{ url_for('main.api_stats', case_id=case.id) }}" class="rounded-xl border bg-white px-5 py-3 font-semibold hover:bg-slate-50">Statistik als JSON</a>
+</div>
+<p class="mt-5 text-xs leading-5 text-slate-500">Wichtig: In dieser Starterversion sind die Fälle und Strafwerte illustrative Demo-Daten, keine verifizierten realen Urteile. Vor einer Veröffentlichung müssen Quellen, Rechtsstand und die tatsächlichen Urteile sorgfältig geprüft und dokumentiert werden.</p>
+{% endblock %}
+{% block head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const common = {
+    responsive: true,
+    plugins: { legend: { position: "bottom" } },
+    scales: { y: { beginAtZero: true } }
+  };
+  new Chart(document.getElementById("fine-chart"), {
+    type: "bar",
+    data: {
+      labels: ["Du", "Durchschnitt", "Fallwert"],
+      datasets: [{ label: "Euro", data: [
+        {{ your_fine|tojson }}, {{ stats.average_fine|tojson }}, {{ case.real_fine|tojson }}
+      ] }]
+    }, options: common
+  });
+  new Chart(document.getElementById("jail-chart"), {
+    type: "bar",
+    data: {
+      labels: ["Du", "Durchschnitt", "Fallwert"],
+      datasets: [{ label: "Jahre", data: [
+        {{ your_jail|tojson }}, {{ stats.average_jail|tojson }}, {{ case.real_jail|tojson }}
+      ] }]
+    }, options: common
+  });
+});
+</script>
+{% endblock %}

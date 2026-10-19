@@ -1,0 +1,8 @@
+/* Small project-specific additions; the main layout uses Tailwind CDN. */
+input[type="range"] {
+  accent-color: #4338ca;
+  cursor: pointer;
+}
+canvas {
+  max-width: 100%;
+}
